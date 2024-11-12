@@ -5,9 +5,9 @@ const router = createRouter({
     routes: [
         {
             // 메인 화면
-            path : '/',
-            name : 'Main',
-            component : () => import('@/views/MainPage.vue')
+            path: '/',
+            name: 'Main',
+            component: () => import('@/views/MainPage.vue')
         },
         {
             // 로그인 화면
@@ -36,8 +36,32 @@ const router = createRouter({
             name: 'ChatroomView',
             component: () => import('@/views/ChatroomView.vue'),
             props: true
+        },
+        {
+            path: '/booklists',
+            component: () => import('@/views/BookListView.vue')
+        },
+        {
+            path: '/booklists/:id',
+            component: () => import('@/views/BookDetailView.vue')
+        },
+        {
+            path: '/booklists/:id/review/create',
+            component: () => import('@/views/BookReviewCreateView.vue')
+        },
+        {
+            path: '/booklists/:bookId/review/:reviewId/edit',
+            component: () => import('@/views/BookReviewEditView.vue')
+        },
+        {
+            path: '/bookrecommend/:id',
+            component: () => import('@/views/BookRecommendView.vue')
         }
-    ]
+    ],
+    scrollBehavior(to, from, savedPosition) {
+        // 스크롤을 항상 맨 위로 이동
+        return {top: 0};
+    }
 });
 
 export default router;

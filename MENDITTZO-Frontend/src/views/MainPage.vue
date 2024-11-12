@@ -4,7 +4,10 @@ import 'swiper/swiper-bundle.css'; // Swiper 스타일
 import {Navigation, Pagination} from "swiper/modules";
 import {onMounted, reactive, ref} from "vue";
 import axios from "axios";
-import PagingBar from "@/components/PagingBar.vue";
+import PagingBar from "@/components/common/PagingBar.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 
 const images = [
   "/src/assets/image/ad1.png",
@@ -55,6 +58,10 @@ const state = reactive({
 
 const bestBooks = ref([]);
 
+const goToBookDetail = (id) => {
+  router.push(`/booklists/${id}`);
+}
+
 const fetchBestBooks = async () => {
   const response = (await axios.get(`/booklists`, {
     params: {
@@ -87,7 +94,7 @@ onMounted(() => {
       fetchBestBooks();
       fetchBooks();
     }
-)
+);
 </script>
 
 <template>
@@ -112,7 +119,7 @@ onMounted(() => {
         <div class="chat" v-for="book in bestBooks">
           <div class="list-left">
             <img class="bmk-image" src="../assets/image/bookmark.png" alt="북마크이미지">
-            <p class="list-title">{{book.title}}</p>
+            <p class="list-title" @click="goToBookDetail(book.bookId)">{{book.title}}</p>
           </div>
           <div class="list-right">
             <p class="list_info">{{book.author}}</p>
@@ -136,8 +143,8 @@ onMounted(() => {
     </div>
 
     <h1>최근 도서</h1>
-    <div id="books">
-      <div class="book" v-for="book in state.books">
+    <div id="books" >
+      <div class="book" v-for="book in state.books" @click="goToBookDetail(book.bookId)">
         <img class="book-img" :src="book.img" alt="책 이미지">
           <p class="book-title">{{book.title}}</p>
         <div class="book-info">
