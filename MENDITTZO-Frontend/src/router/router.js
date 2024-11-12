@@ -1,4 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
+import ChatroomList from "@/views/ChatroomList.vue";
+import ChatroomView from "@/views/ChatroomView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -24,6 +26,19 @@ const router = createRouter({
             path: '/mypage',
             component: () => import('@/views/MyPage.vue')
         },
+        {
+            // 채팅방 목록 화면
+            path: '/chatrooms',
+            name: 'ChatroomList',
+            component: () => import('@/views/ChatroomList.vue')
+        },
+        {
+            // 채팅방 상세 화면
+            path: '/chatrooms/:id',
+            name: 'ChatroomView',
+            component: () => import('@/views/ChatroomView.vue'),
+            props: true
+        }
     ]
 });
 
