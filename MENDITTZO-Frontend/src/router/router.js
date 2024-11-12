@@ -1,6 +1,4 @@
 import {createRouter, createWebHistory} from "vue-router";
-import ChatroomList from "@/views/ChatroomList.vue";
-import ChatroomView from "@/views/ChatroomView.vue";
 
 const router = createRouter({
     history: createWebHistory(),
