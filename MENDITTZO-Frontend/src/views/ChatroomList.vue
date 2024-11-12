@@ -5,7 +5,7 @@
       <button class="create-room-button" @click="showModal = true">독서토론방 생성</button>
       <div v-for="room in chatRooms" :key="room.chatroomId" class="chat-room">
         <div class="room-info">
-          <button class="enter-room-button" @click="enterRoom(Number(room.chatroomId), room.title)">{{ room.title }}</button>
+          <button class="enter-room-button" @click="enterRoom(Number(room.chatroomId), room.title, room.bookId)">{{ room.title }}</button>
           <span class="member-count">{{ room.currentMemberCount }} / {{ room.maxMemberCount }}명</span>
         </div>
       </div>
@@ -93,7 +93,7 @@ const submitChatRoom = async () => {
 };
 
 // 채팅방 입장
-const enterRoom = async (roomId, roomTitle) => {
+const enterRoom = async (roomId, roomTitle, bookId) => {
   try {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -108,7 +108,10 @@ const enterRoom = async (roomId, roomTitle) => {
     });
 
     if (response.status === 200) {
-      await router.push({ path: `/chatrooms/${roomId}`, query: { title: roomTitle } });
+      await router.push({
+        path: `/chatrooms/${roomId}`,
+        query: { title: roomTitle, bookId: bookId } // bookId를 쿼리에 추가
+      });
     } else {
       console.error('Failed to enter chat room:', response.status, response.statusText);
     }
