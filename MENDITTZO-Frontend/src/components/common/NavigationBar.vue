@@ -137,7 +137,11 @@ onUnmounted(() => {
       <RouterLink :to="`/bookrecommend/${authStore.userId}`" active-class="active" replace>
         <p class="nav-bottom-text">도서목록</p>
       </RouterLink>
-      <div><p class="nav-bottom-text">독서토론방</p></div>
+      <div>
+        <RouterLink to="/chatrooms" active-class="active" replace>
+          <p class="nav-bottom-text">독서토론방</p>
+        </RouterLink>
+      </div>
     </div>
   </header>
 </template>

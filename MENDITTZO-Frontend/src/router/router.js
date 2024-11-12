@@ -5,9 +5,9 @@ const router = createRouter({
     routes: [
         {
             // 메인 화면
-            path : '/',
-            name : 'Main',
-            component : () => import('@/views/MainPage.vue')
+            path: '/',
+            name: 'Main',
+            component: () => import('@/views/MainPage.vue')
         },
         {
             // 로그인 화면
@@ -23,6 +23,19 @@ const router = createRouter({
             // 마이페이지 화면
             path: '/mypage',
             component: () => import('@/views/MyPage.vue')
+        },
+        {
+            // 채팅방 목록 화면
+            path: '/chatrooms',
+            name: 'ChatroomList',
+            component: () => import('@/views/ChatroomList.vue')
+        },
+        {
+            // 채팅방 상세 화면
+            path: '/chatrooms/:id',
+            name: 'ChatroomView',
+            component: () => import('@/views/ChatroomView.vue'),
+            props: true
         },
         {
             path: '/booklists',
@@ -47,9 +60,8 @@ const router = createRouter({
     ],
     scrollBehavior(to, from, savedPosition) {
         // 스크롤을 항상 맨 위로 이동
-        return { top: 0 };
+        return {top: 0};
     }
-
 });
 
 export default router;
