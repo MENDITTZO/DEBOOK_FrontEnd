@@ -144,6 +144,7 @@ onUnmounted(() => {
       </div>
     </div>
   </header>
+  <hr id="bottom-hr" />
 </template>
 
 <style scoped>
@@ -157,8 +158,9 @@ header {
 }
 #bottom-hr {
   border: none;
-  height: 1px;
+  height: 2px;
   background-color: #78AE6B;
+  width: 1440px;
 }
 #top-nav {
 
