@@ -1,15 +1,28 @@
 <template>
   <div class="chat-container">
+    <!-- 책 정보 -->
+    <div class="book-info">
+      <img :src="bookImg" alt="Book Cover" class="book-cover"/>
+      <div class="book-details">
+        <h3 class="book-title">{{ bookTitle }}</h3>
+        <p class="book-author">by {{ bookAuthor }}</p>
+      </div>
+    </div>
+
     <h2 class="chat-title">{{ currentRoomTitle }}</h2>
     <div class="messages-container">
       <div v-for="message in messages" :key="message.createDatetime" class="message">
         <span class="message-nickname">{{ message.nickname }}</span>
         <span class="message-content">{{ message.chatContent }}</span>
-        <span class="message-time">{{ new Date(message.createDatetime).toLocaleTimeString() }}</span>
+        <span class="message-time">
+          {{
+            new Date(new Date(message.createDatetime).setHours(new Date(message.createDatetime).getHours() + 9)).toLocaleTimeString()
+          }}
+        </span>
       </div>
     </div>
     <div class="input-area">
-      <input v-model="newMessage" placeholder="Type a message..." />
+      <input v-model="newMessage" placeholder="Type a message..."/>
       <button @click="sendMessage">Send</button>
     </div>
     <div class="actions">
@@ -20,22 +33,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
-import { Stomp } from '@stomp/stompjs';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from "@/store/auth.js";
+import {Stomp} from '@stomp/stompjs';
+import {useRoute, useRouter} from 'vue-router';
+import {useAuthStore} from "@/store/auth.js";
 
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const currentRoomId = route.params.id;
+const bookId = route.query.bookId; // 책 ID를 쿼리에서 가져옵니다.
 const currentRoomTitle = ref(route.query.title || 'Chat Room');
+
+// 책 정보 변수 추가
+const bookTitle = ref('');
+const bookImg = ref('');
+const bookAuthor = ref('');
 const messages = ref([]);
 const newMessage = ref('');
 let stompClient = null;
 
-// 서버에서 해당 채팅방의 기존 메시지를 가져오는 함수
+// 책 정보 가져오기 함수
+const fetchBookDetails = async () => {
+  try {
+    const token = localStorage.getItem('accessToken');
+    const response = await axios.get(`http://localhost:8080/api/v1/booklists/${bookId}`);
+
+    const bookData = response.data.bookResponse; // BookResponseDTO
+    bookTitle.value = bookData.title;
+    bookImg.value = bookData.img;
+    bookAuthor.value = bookData.author;
+  } catch (error) {
+    console.error('Failed to fetch book details:', error);
+  }
+};
+
+// 기존 메시지 가져오기 함수
 const fetchMessages = async () => {
   try {
     const token = localStorage.getItem('accessToken');
@@ -50,7 +84,6 @@ const fetchMessages = async () => {
   }
 };
 
-// WebSocket 서버에 연결하는 함수
 const connectToServer = () => {
   const socket = new WebSocket('ws://localhost:8080/ws-stomp');
   stompClient = Stomp.over(() => socket);
@@ -72,7 +105,6 @@ const connectToServer = () => {
   });
 };
 
-// 메시지를 전송하는 함수
 const sendMessage = () => {
   if (newMessage.value.trim() !== '' && stompClient) {
     const messageData = {
@@ -86,7 +118,6 @@ const sendMessage = () => {
   }
 };
 
-// 채팅방을 나가는 함수
 const leaveRoom = async () => {
   try {
     const token = localStorage.getItem('accessToken');
@@ -95,19 +126,18 @@ const leaveRoom = async () => {
         Authorization: `Bearer ${token}`
       }
     });
-    await router.push('/chatrooms'); // 나가기 후 채팅방 목록으로 이동
+    await router.push('/chatrooms');
   } catch (error) {
     console.error('Failed to leave chat room:', error);
   }
 };
 
-// 메뉴로 돌아가는 함수
 const goToMenu = () => {
   router.push('/chatrooms');
 };
 
-// 페이지에 처음 로드될 때 기존 메시지를 가져오고 WebSocket 연결
 onMounted(() => {
+  fetchBookDetails(); // 책 정보를 가져옵니다
   fetchMessages();
   connectToServer();
 });
@@ -121,6 +151,36 @@ onMounted(() => {
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.book-cover {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+.book-details {
+  flex-grow: 1;
+}
+
+.book-title {
+  color: #333;
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: bold;
+}
+
+.book-author {
+  color: #666;
+  font-size: 0.9rem;
 }
 
 .chat-title {
